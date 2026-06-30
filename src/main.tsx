@@ -30,28 +30,32 @@ import { askPublicBot, config, publicUrl, track } from './runtime';
 type Message = { from: 'user' | 'bot'; text: string };
 
 const modules = [
-  ['Expedientes', 'Apertura, tipo, cliente, contraparte, responsable, prioridad, estado, auditoría y cierre.', BriefcaseBusiness],
-  ['Agenda legal', 'Audiencias, reuniones, presentaciones, vencimientos y revisiones críticas por expediente.', CalendarDays],
-  ['Clientes y partes', 'Clientes, contrapartes, abogados, tribunales, responsables internos y contactos autorizados.', UsersRound],
-  ['Documentos y plantillas', 'Demandas, poderes, contratos, cartas, acuerdos, escritos y paquetes documentales editables.', FileText],
-  ['Firma digital', 'Solicitud de firma, tracking de estado, token público y trazabilidad de documentos enviados.', FileSignature],
+  ['Gestión de casos', 'Código, cliente, estado, tipo, prioridad, responsable, área, etiquetas, riesgo, fechas, SLA y cierre.', BriefcaseBusiness],
+  ['Expedientes', 'Documentos, observaciones, tareas, comentarios, adjuntos, aprobaciones, vencimientos e historial.', ClipboardCheck],
+  ['Workflow configurable', 'Estados, transiciones, checklist, documentos requeridos, tareas y vencimientos por tipo de caso.', SearchCheck],
+  ['Calendario', 'Audiencias, reuniones, inspecciones, presentaciones, vencimientos, renovaciones y revisiones críticas.', CalendarDays],
+  ['Clientes y partes', 'Clientes, responsables, contrapartes, contactos autorizados y áreas internas relacionadas al caso.', UsersRound],
+  ['Documentos y plantillas', 'Plantillas, borradores, versiones, generación documental, paquetes y entregas controladas.', FileText],
+  ['Firmas y entregas', 'Solicitud, tracking de estado, token público y trazabilidad de documentos enviados.', FileSignature],
   ['Time tracking', 'Horas por profesional, actividad, tarifa, facturable/no facturable y aprobación operativa.', Clock3],
-  ['Honorarios', 'Retainers, facturas, honorarios pendientes, vencidos, pagados y forecast de cobranza.', BadgeDollarSign],
-  ['Gastos', 'Tasas, sellados, movilidad, pericias, court reporter, transcriptos y gastos reembolsables.', ClipboardCheck],
-  ['Dashboard legal', 'Expedientes abiertos, cierres, vencimientos, honorarios pendientes, horas y audiencias.', BarChart3],
-  ['Copiloto jurídico', 'Resumen de expedientes, riesgos, vencimientos, escritos faltantes y documentos pendientes.', Bot],
+  ['Honorarios y facturación', 'Por hora, fijo, abono, éxito, gasto, pendiente, vencido, pagado y forecast de cobranza.', BadgeDollarSign],
+  ['Vencimientos y alertas', 'Fechas críticas, tareas asociadas, responsables, historial y base para notificaciones automáticas.', TimerReset],
+  ['Dashboard', 'Casos abiertos, cerrados, vencimientos, productividad, facturación, horas, riesgo y SLA.', BarChart3],
+  ['Copiloto', 'Resúmenes, documentación faltante, casos vencidos, clientes pendientes y borradores revisables.', Bot],
 ] as const;
 
-const caseTypes = ['Litigation', 'Employment Law', 'Corporate Advisory', 'Real Estate Law', 'IP & Technology', 'Tax & Compliance'];
+const caseTypes = ['Jurídico', 'Contable', 'Escribanía', 'Auditoría', 'Seguros', 'RRHH', 'Gestoría', 'Comercio exterior', 'Certificaciones', 'Ambiental'];
+
+const industries = ['Estudios jurídicos', 'Estudios contables', 'Escribanías', 'Consultoras', 'Auditorías', 'Gestores', 'Seguros', 'Recursos Humanos', 'Certificadoras', 'Comercio exterior'];
 
 const flow = [
-  ['Intake', 'Cliente, conflicto de interés, alcance, documentos iniciales y apertura formal.'],
-  ['Expediente', 'Tipo, responsable, contraparte, prioridad, estado y calendario procesal.'],
-  ['Estrategia', 'Tareas, documentos, research, presupuesto y próximos pasos.'],
-  ['Audiencias', 'Reuniones, presentaciones, vencimientos y evidencia asociada.'],
-  ['Facturación', 'Horas, honorarios, gastos, retainers y pendientes de cobro.'],
-  ['Cierre', 'Resultado, documentos finales, firma, conformidad e historial auditado.'],
-  ['Insights', 'Dashboard, causas sin movimiento, clientes pendientes y ROI operativo.'],
+  ['Caso', 'Entidad principal: todo gira alrededor del caso, no del cliente ni del documento.'],
+  ['Expediente', 'Documentos, tareas, comentarios, adjuntos, aprobaciones, responsables e historial.'],
+  ['Workflow', 'Estados configurables por tipo de caso, con checklist, vencimientos y tareas automáticas.'],
+  ['Calendario', 'Audiencias, reuniones, presentaciones, inspecciones, renovaciones y fechas críticas.'],
+  ['Facturación', 'Horas, honorarios, gastos, abonos, éxito y pendientes de cobro.'],
+  ['Links públicos', 'Documentos, modelos y entregas por token público sin exponer el backoffice.'],
+  ['Copiloto', 'Resumen, documentación faltante, riesgo, SLA, casos vencidos y próximos pasos.'],
 ];
 
 const demoCases = [
@@ -88,27 +92,31 @@ const publicLinks = [
 const copilotKnowledge = [
   {
     intent: ['vence', 'vencimiento', 'semana', 'audiencia', 'deadline'],
-    answer: 'CaseFlow cruza vencimientos, audiencias y tareas abiertas por expediente. Para una demo jurídica conviene pedir: expedientes que vencen esta semana, escritos sin presentar y audiencias sin documentación completa.',
+    answer: 'CaseFlow cruza vencimientos, calendario y tareas abiertas por caso. Sirve para audiencias legales, presentaciones contables, inspecciones, renovaciones, certificados, contratos y cualquier fecha crítica de un proceso profesional.',
   },
   {
     intent: ['honorario', 'factura', 'cobrar', 'pendiente', 'fee'],
-    answer: 'El módulo de honorarios separa retainer, factura mensual, pendiente, vencido y pagado. El dashboard muestra honorarios pendientes y permite priorizar follow-up comercial sin abrir expediente por expediente.',
+    answer: 'El módulo de honorarios/facturación separa cobro por hora, fijo, abono, éxito, gasto, pendiente, vencido y pagado. El dashboard muestra pendientes y permite priorizar follow-up sin abrir caso por caso.',
   },
   {
     intent: ['resumen', 'gomez', 'perez', 'expediente', 'caso'],
-    answer: 'El resumen ejecutivo debe incluir cliente, contraparte, estado, tribunal, próximos vencimientos, documentos pendientes, horas cargadas, honorarios y riesgo operativo.',
+    answer: 'El resumen ejecutivo debe incluir cliente, tipo de caso, estado, responsable, próximos vencimientos, documentos pendientes, tareas, horas cargadas, honorarios, SLA y riesgo operativo.',
   },
   {
-    intent: ['hora', 'time', 'tracking', 'profesional', 'abogado'],
-    answer: 'Time tracking registra profesional, fecha, actividad, descripción, horas, tarifa, moneda, estado y si es facturable. Eso alimenta ROI, honorarios y productividad por abogado.',
+    intent: ['hora', 'time', 'tracking', 'profesional', 'abogado', 'contador', 'consultor'],
+    answer: 'Time tracking registra profesional, fecha, actividad, descripción, horas, tarifa, moneda, estado y si es facturable. Alimenta ROI, honorarios y productividad por responsable, área o tipo de caso.',
   },
   {
     intent: ['firma', 'documento', 'plantilla', 'poder', 'demanda'],
-    answer: 'CaseFlow conecta plantillas, documentos generados, envíos y firma electrónica/digital. El objetivo es que poderes, demandas, acuerdos y cartas queden dentro del expediente con trazabilidad.',
+    answer: 'CaseFlow conecta plantillas, documentos generados, envíos controlados y solicitudes de firma/aceptación. El objetivo es que contratos, demandas, balances, poderes, informes, cartas, certificados o entregables queden dentro del expediente con trazabilidad.',
   },
   {
     intent: ['roi', 'dashboard', 'indicador', 'metricas'],
-    answer: 'El ROI aparece en menos expedientes sin movimiento, menos vencimientos perdidos, más horas facturables capturadas, honorarios pendientes visibles y menor tiempo administrativo por documento.',
+    answer: 'El ROI aparece en menos casos sin movimiento, menos vencimientos perdidos, más horas facturables capturadas, honorarios pendientes visibles, menor tiempo administrativo por documento y mejor SLA.',
+  },
+  {
+    intent: ['tipo', 'tipos', 'checklist', 'workflow', 'contable', 'seguro', 'auditoria'],
+    answer: 'Los tipos de caso vuelven universal a CaseFlow: jurídico, contable, seguros, auditoría, RRHH, gestoría o comercio exterior pueden definir workflow, campos, checklist, documentos, vencimientos y plantillas propias.',
   },
 ];
 
@@ -119,7 +127,7 @@ function normalize(value: string) {
 function askCopilot(prompt: string) {
   const text = normalize(prompt);
   return copilotKnowledge.find((item) => item.intent.some((key) => text.includes(normalize(key))))?.answer
-    ?? 'Lo miraría como expediente completo: cliente, contraparte, estado, audiencia, vencimientos, documentos, horas, honorarios, gastos, firma y próximo paso. Ahí aparece la operación real del estudio.';
+    ?? 'Lo miraría como caso completo: cliente, partes, estado, calendario, vencimientos, documentos, horas, honorarios, gastos, entregas y próximo paso. Ahí aparece la operación real.';
 }
 
 function Copilot() {
@@ -128,7 +136,7 @@ function Copilot() {
   const [messages, setMessages] = useState<Message[]>([
     { from: 'bot', text: 'Soy el copiloto de CaseFlow. Preguntame por vencimientos, honorarios, time tracking, documentos o resumen de expediente.' },
   ]);
-  const prompts = ['¿Qué expedientes vencen esta semana?', '¿Qué clientes tienen honorarios pendientes?', 'Preparame un resumen ejecutivo'];
+  const prompts = ['¿Qué casos vencen esta semana?', '¿Qué documentación falta?', '¿Sirve para estudio contable?'];
   const send = (value: string) => {
     if (!value.trim()) return;
     track('BOT_QUESTION', { actionCode: 'caseflow_public_copilot_question', actionLabel: value.slice(0, 120), category: 'COPILOT' });
@@ -174,7 +182,7 @@ function App() {
       <nav className="nav">
         <a className="brand" href="#inicio">
           <span className="brand-mark"><Scale size={22} /></span>
-          <span><strong>CaseFlow</strong><small>Legal operations</small></span>
+          <span><strong>CaseFlow</strong><small>Case operations</small></span>
         </a>
         <div><a data-mkt="caseflow_nav_modules" href="#modulos">Módulos</a><a data-mkt="caseflow_nav_flow" href="#flujo">Flujo</a><a data-mkt="caseflow_nav_dashboard" href="#dashboard">Dashboard</a><a data-mkt="caseflow_nav_links" href="#links">Links</a><a data-mkt="caseflow_nav_demo" href="#demo">Demo</a></div>
       </nav>
@@ -183,11 +191,11 @@ function App() {
         <img src="https://images.unsplash.com/photo-1505664194779-8beaceb93744?auto=format&fit=crop&w=1800&q=84" alt="Biblioteca jurídica profesional" />
         <div className="hero-overlay" />
         <div className="hero-copy">
-          <p className="eyebrow">EXPEDIENTES · AUDIENCIAS · DOCUMENTOS · HONORARIOS</p>
-          <h1>El BackOffice jurídico para estudios que viven de expedientes, vencimientos y clientes.</h1>
-          <p>Centralizá casos, documentos, audiencias, tareas, firmas, honorarios, gastos y time tracking sobre DiceProjects Core con copiloto jurídico y dashboard operativo.</p>
+          <p className="eyebrow">CASOS · EXPEDIENTES · WORKFLOWS · VENCIMIENTOS</p>
+          <h1>La plataforma para gestionar casos, expedientes y procesos profesionales.</h1>
+          <p>Centralizá casos, expedientes, documentos, tareas, calendarios, vencimientos, responsables, honorarios, gastos y time tracking sobre DiceProjects Core con copiloto operativo.</p>
           <div className="actions">
-            <a className="button primary" href="#demo" onClick={() => track('CLICK', { actionCode: 'caseflow_cta_demo', actionLabel: 'Ver demo jurídica', category: 'CTA' })}>Ver demo jurídica <ArrowRight size={18} /></a>
+            <a className="button primary" href="#demo" onClick={() => track('CLICK', { actionCode: 'caseflow_cta_demo', actionLabel: 'Ver demo CaseFlow', category: 'CTA' })}>Ver demo CaseFlow <ArrowRight size={18} /></a>
             <a className="button secondary" href="#modulos" onClick={() => track('CLICK', { actionCode: 'caseflow_cta_modules', actionLabel: 'Ver módulos', category: 'CTA' })}>Ver módulos</a>
           </div>
         </div>
@@ -204,17 +212,17 @@ function App() {
       </section>
 
       <section className="proof">
-        <article><strong>{roi.clients}</strong><span>clientes jurídicos</span></article>
-        <article><strong>{roi.cases}</strong><span>expedientes demo</span></article>
+        <article><strong>{roi.clients}</strong><span>clientes</span></article>
+        <article><strong>{roi.cases}</strong><span>casos demo</span></article>
         <article><strong>{roi.open}</strong><span>casos abiertos</span></article>
         <article><strong>{roi.closed}</strong><span>casos cerrados</span></article>
       </section>
 
       <section id="modulos" className="section">
         <div className="section-title">
-          <p className="eyebrow">GESTIÓN JURÍDICA COMPLETA</p>
-          <h2>No es un tablero de tareas. Es la operación legal completa.</h2>
-          <p>CaseFlow conecta el expediente con el cliente, el calendario, los documentos, los costos y la inteligencia operativa del estudio.</p>
+          <p className="eyebrow">GESTIÓN DE CASOS COMPLETA</p>
+          <h2>No es un tablero de tareas. Es la operación profesional por caso.</h2>
+          <p>CaseFlow conecta el caso con el expediente, el workflow, el calendario, los documentos, los costos, los honorarios y la inteligencia operativa.</p>
         </div>
         <div className="cards">
           {modules.map(([title, copy, Icon]) => <article key={title}><Icon /><h3>{title}</h3><p>{copy}</p></article>)}
@@ -223,19 +231,30 @@ function App() {
 
       <section className="section split">
         <div>
-          <p className="eyebrow">PARA ESTUDIOS Y ÁREAS LEGALES</p>
-          <h2>El mismo Core, adaptado al lenguaje jurídico.</h2>
-          <p>CaseFlow puede operar demandas, mediaciones, reclamos laborales, contratos, compliance, real estate, IP, auditorías y expedientes internos.</p>
+          <p className="eyebrow">NO APUNTA A UNA PROFESIÓN. APUNTA A UNA FORMA DE TRABAJAR.</p>
+          <h2>Todos los equipos que trabajan por casos pueden usar el mismo motor.</h2>
+          <p>Jurídico, contable, seguros, auditoría, recursos humanos, gestoría, certificaciones, ambiente o comercio exterior comparten la misma necesidad: caso, expediente, workflow, documentos, vencimientos, responsables y dashboard.</p>
         </div>
         <div className="case-type-list">
-          {caseTypes.map((item) => <span key={item}><CheckCircle2 size={16} /> {item}</span>)}
+          {industries.map((item) => <span key={item}><CheckCircle2 size={16} /> {item}</span>)}
+        </div>
+      </section>
+
+      <section className="section split">
+        <div>
+          <p className="eyebrow">TIPOS DE CASO</p>
+          <h2>La capa que vuelve universal a CaseFlow.</h2>
+          <p>Cada tipo puede definir workflow, documentos, tareas, vencimientos y checklist operativo. Un caso laboral y un balance contable usan el mismo Core con reglas diferentes.</p>
+        </div>
+        <div className="case-type-list">
+          {caseTypes.map((item) => <span key={item}><ShieldCheck size={16} /> {item}</span>)}
         </div>
       </section>
 
       <section id="flujo" className="section flows">
         <div className="section-title">
-          <p className="eyebrow">FLUJO DEL EXPEDIENTE</p>
-          <h2>Del intake al cierre, sin perder trazabilidad.</h2>
+          <p className="eyebrow">ARQUITECTURA OPERATIVA</p>
+          <h2>Del caso al dashboard, sin perder trazabilidad.</h2>
         </div>
         <div>
           {flow.map(([title, copy], index) => (
@@ -250,13 +269,13 @@ function App() {
 
       <section id="dashboard" className="section dashboard">
         <div>
-          <p className="eyebrow">DASHBOARD LEGAL</p>
-          <h2>Indicadores que importan en un estudio jurídico.</h2>
-          <p>Expedientes abiertos, cierres, vencimientos críticos, audiencias, horas facturables, honorarios pendientes y gastos reembolsables.</p>
+          <p className="eyebrow">DASHBOARD</p>
+          <h2>Indicadores que importan en una operación por casos.</h2>
+          <p>Casos abiertos, cierres, vencimientos críticos, calendario, productividad, horas facturables, honorarios pendientes, riesgo y SLA.</p>
         </div>
         <div className="metrics">
           <article><TimerReset /><strong>24</strong><span>vencimientos próximos</span></article>
-          <article><Gavel /><strong>18</strong><span>audiencias agendadas</span></article>
+          <article><Gavel /><strong>18</strong><span>eventos críticos</span></article>
           <article><Clock3 /><strong>842 h</strong><span>horas facturables</span></article>
           <article><BadgeDollarSign /><strong>US$ 184k</strong><span>honorarios pendientes</span></article>
         </div>
@@ -287,7 +306,7 @@ function App() {
             <div className="timeline">
               <span><SearchCheck size={16} /> Conflict check completo</span>
               <span><FileText size={16} /> Discovery package generado</span>
-              <span><FileSignature size={16} /> Firma solicitada al cliente</span>
+              <span><FileSignature size={16} /> Entrega documental enviada</span>
               <span><ShieldCheck size={16} /> Historial auditado</span>
             </div>
           </article>
@@ -297,12 +316,12 @@ function App() {
       <section className="section kb-strip">
         <article>
           <p className="eyebrow">KB PARA COPILOTO</p>
-          <h2>Experto en gestión jurídica y operación de estudio.</h2>
-          <p>El copiloto entiende expedientes, vencimientos, presentaciones, escritos, honorarios, gastos, clientes y documentación pendiente.</p>
+          <h2>Experto en operación por casos.</h2>
+          <p>El copiloto entiende casos, expedientes, tipos, workflows, checklist, vencimientos, documentos, honorarios, gastos, clientes, SLA y documentación pendiente.</p>
         </article>
         <div className="kb-list">
-          <span><CalendarDays size={18} /> Expedientes que vencen esta semana.</span>
-          <span><FileText size={18} /> Escritos todavía no presentados.</span>
+          <span><CalendarDays size={18} /> Casos que vencen esta semana.</span>
+          <span><FileText size={18} /> Documentación todavía no presentada.</span>
           <span><BadgeDollarSign size={18} /> Clientes con honorarios pendientes.</span>
           <span><TimerReset size={18} /> Causas sin movimiento hace 90 días.</span>
           <span><MessageCircle size={18} /> Resumen ejecutivo para cliente o socio.</span>
@@ -312,7 +331,7 @@ function App() {
       <section id="links" className="section public-links">
         <div className="section-title">
           <p className="eyebrow">LINKS PÚBLICOS DEMO</p>
-          <h2>Cómo se comparte documentación legal sin abrir el backoffice.</h2>
+          <h2>Cómo se comparte documentación sin abrir el backoffice.</h2>
           <p>Modelos, paquetes documentales y entregas se ven por token público, con lenguaje de cliente y sin exponer IDs internos ni pantallas operativas.</p>
         </div>
         <div className="link-grid">
@@ -330,18 +349,18 @@ function App() {
       <section id="demo" className="section lead">
         <div>
           <p className="eyebrow">CASO DE ÉXITO DEMO</p>
-          <h2>Sterling Whitman LLP, un estudio jurídico premium funcionando sobre DiceProjects.</h2>
-          <p>La demo muestra clientes, casos, documentos, estados, vencimientos, costos y dashboard realista para vender una plataforma jurídica completa.</p>
+          <h2>Sterling Whitman LLP, una demo vertical sobre el motor universal de CaseFlow.</h2>
+          <p>La demo jurídica muestra clientes, casos, documentos, estados, vencimientos, costos y dashboard; el mismo motor aplica a estudios contables, seguros, auditorías, gestorías y certificadoras.</p>
         </div>
         <form>
           <input placeholder="Nombre" />
           <input placeholder="Email" />
-          <textarea placeholder="Contanos si querés demo para estudio jurídico, área legal corporativa o escribanía" />
+          <textarea placeholder="Contanos si querés demo para estudio jurídico, contable, consultora, seguros, gestoría o área profesional" />
           <button className="button primary" type="button">Solicitar demo</button>
         </form>
       </section>
 
-      <footer>CaseFlow no es gestión genérica de tareas. Es BackOffice jurídico sobre DiceProjects Core.</footer>
+      <footer>CaseFlow no es gestión genérica de tareas. Es la plataforma para organizaciones que trabajan por casos, expedientes y procesos profesionales.</footer>
       <Copilot />
     </main>
   );

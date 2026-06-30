@@ -2,7 +2,7 @@
 
 Landing comercial de CaseFlow by DiceProjects.
 
-CaseFlow Pub posiciona la gestión de casos como un BackOffice jurídico para estudios legales, áreas legales corporativas y equipos que trabajan con expedientes, documentos, audiencias, vencimientos, honorarios, gastos y time tracking.
+CaseFlow Pub posiciona la gestión de casos como una plataforma para organizaciones que trabajan por casos, expedientes y procesos profesionales. La demo actual usa un estudio jurídico como caso de éxito, pero el producto no queda limitado a una profesión.
 
 ## Stack
 
@@ -30,16 +30,33 @@ http://localhost:3006
 
 ## Posicionamiento
 
-CaseFlow no se vende como un gestor genérico de tareas. Se presenta como una plataforma jurídica operativa:
+CaseFlow no se vende como un gestor genérico de tareas. Se presenta como una plataforma operativa por casos:
 
-- Clientes y contrapartes.
+- Caso como entidad principal.
 - Expedientes con flujo de estados.
-- Audiencias, reuniones, presentaciones y vencimientos.
-- Documentos, plantillas, envíos y firmas.
+- Calendario de audiencias, reuniones, inspecciones, presentaciones y vencimientos.
+- Documentos, plantillas, borradores, envíos y entregas públicas.
 - Honorarios, gastos, costos y time tracking.
-- Dashboard legal.
-- Copiloto jurídico conectado al contexto del expediente.
+- Dashboard de casos.
+- Copiloto operativo conectado al contexto del expediente.
+
+## Funcionalidades actuales y alcance
+
+Disponible en la demo/API:
+
+- Casos y tipos de caso.
+- Estados y workflows configurables.
+- Tareas, participantes, documentos, vencimientos, eventos/calendario, time tracking, honorarios, gastos, firmas/entregas, notas e historial.
+- Dashboard y links públicos documentales.
+- Copiloto comercial con KB específica.
+
+No se debe vender como terminado todavía:
+
+- Portal cliente completo.
+- OCR documental.
+- Integraciones AFIP/ARCA, Drive, SharePoint, Outlook o Gmail.
+- Automatizaciones outbound avanzadas.
 
 ## Demo
 
-La landing acompaña el tenant demo `Sterling Whitman LLP`, cargado por API con 120 clientes y 300 expedientes jurídicos.
+La landing acompaña el tenant demo `Sterling Whitman LLP`, cargado por API con 120 clientes y 300 expedientes jurídicos. Es una demostración vertical del motor universal de CaseFlow.
