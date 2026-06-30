@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
   ArrowRight,
@@ -25,6 +25,7 @@ import {
   UsersRound,
 } from 'lucide-react';
 import './styles.css';
+import { askPublicBot, config, publicUrl, track } from './runtime';
 
 type Message = { from: 'user' | 'bot'; text: string };
 
@@ -66,21 +67,21 @@ const publicLinks = [
     tag: 'MODELO PÚBLICO',
     copy: 'Vista pública real de plantilla documental compartida por token para revisar alcance y variables.',
     detail: 'Sterling Whitman LLP · onboarding de cliente',
-    href: 'https://backoffice.diceprojects.com/public/caseflow/templates/caseflow-c0cfc069-legal-engagement-letter',
+    href: publicUrl(config.templateEngagementPath),
   },
   {
     title: 'Modelo de demanda',
     tag: 'DOCUMENTO LEGAL',
     copy: 'Ejemplo de modelo jurídico compartible para mostrar cómo se entrega una plantilla controlada.',
     detail: 'Litigation · complaint package · variables auditables',
-    href: 'https://backoffice.diceprojects.com/public/caseflow/templates/caseflow-c0cfc069-legal-demand-letter',
+    href: publicUrl(config.templateDemandPath),
   },
   {
     title: 'Paquete documental para firma',
     tag: 'FIRMA / ENTREGA',
     copy: 'Link público de entrega documental para cliente, con estado, vencimiento y trazabilidad.',
     detail: 'LEGAL-EXP-0299 · final document package',
-    href: 'https://backoffice.diceprojects.com/public/caseflow/deliveries/legal-demo-legal-exp-0299-engagement',
+    href: publicUrl(config.deliveryPath),
   },
 ] as const;
 
@@ -130,7 +131,13 @@ function Copilot() {
   const prompts = ['¿Qué expedientes vencen esta semana?', '¿Qué clientes tienen honorarios pendientes?', 'Preparame un resumen ejecutivo'];
   const send = (value: string) => {
     if (!value.trim()) return;
+    track('BOT_QUESTION', { actionCode: 'caseflow_public_copilot_question', actionLabel: value.slice(0, 120), category: 'COPILOT' });
     setMessages((current) => [...current, { from: 'user', text: value }, { from: 'bot', text: askCopilot(value) }]);
+    void askPublicBot(value).then((remoteAnswer) => {
+      if (remoteAnswer) {
+        setMessages((current) => [...current.slice(0, -1), { from: 'bot', text: remoteAnswer }]);
+      }
+    });
     setInput('');
     setOpen(true);
   };
@@ -159,6 +166,9 @@ function App() {
     open: 200,
     closed: 50,
   }), []);
+  useEffect(() => {
+    track('VIEW', { actionCode: 'caseflow_page_home', actionLabel: 'CaseFlow landing', category: 'NAVIGATION' });
+  }, []);
   return (
     <main>
       <nav className="nav">
@@ -166,7 +176,7 @@ function App() {
           <span className="brand-mark"><Scale size={22} /></span>
           <span><strong>CaseFlow</strong><small>Legal operations</small></span>
         </a>
-        <div><a href="#modulos">Módulos</a><a href="#flujo">Flujo</a><a href="#dashboard">Dashboard</a><a href="#links">Links</a><a href="#demo">Demo</a></div>
+        <div><a data-mkt="caseflow_nav_modules" href="#modulos">Módulos</a><a data-mkt="caseflow_nav_flow" href="#flujo">Flujo</a><a data-mkt="caseflow_nav_dashboard" href="#dashboard">Dashboard</a><a data-mkt="caseflow_nav_links" href="#links">Links</a><a data-mkt="caseflow_nav_demo" href="#demo">Demo</a></div>
       </nav>
 
       <section id="inicio" className="hero">
@@ -177,8 +187,8 @@ function App() {
           <h1>El BackOffice jurídico para estudios que viven de expedientes, vencimientos y clientes.</h1>
           <p>Centralizá casos, documentos, audiencias, tareas, firmas, honorarios, gastos y time tracking sobre DiceProjects Core con copiloto jurídico y dashboard operativo.</p>
           <div className="actions">
-            <a className="button primary" href="#demo">Ver demo jurídica <ArrowRight size={18} /></a>
-            <a className="button secondary" href="#modulos">Ver módulos</a>
+            <a className="button primary" href="#demo" onClick={() => track('CLICK', { actionCode: 'caseflow_cta_demo', actionLabel: 'Ver demo jurídica', category: 'CTA' })}>Ver demo jurídica <ArrowRight size={18} /></a>
+            <a className="button secondary" href="#modulos" onClick={() => track('CLICK', { actionCode: 'caseflow_cta_modules', actionLabel: 'Ver módulos', category: 'CTA' })}>Ver módulos</a>
           </div>
         </div>
         <div className="legal-board">
@@ -307,7 +317,7 @@ function App() {
         </div>
         <div className="link-grid">
           {publicLinks.map((item) => (
-            <a className="public-card" href={item.href} target="_blank" rel="noreferrer" key={item.title}>
+            <a className="public-card" href={item.href} target="_blank" rel="noreferrer" key={item.title} onClick={() => track('CASE_VIEW', { actionCode: `caseflow_public_link_${item.tag.toLowerCase().replace(/[\s/]+/g, '_')}`, actionLabel: item.title, category: 'PUBLIC_LINK', entityType: 'CASE', metadata: { href: item.href, detail: item.detail } })}>
               <span className="link-top"><small>{item.tag}</small><ExternalLink size={18} /></span>
               <strong>{item.title}</strong>
               <p>{item.copy}</p>
