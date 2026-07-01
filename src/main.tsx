@@ -29,6 +29,7 @@ import { askPublicBot, config, publicUrl, track } from './runtime';
 type Message = { from: 'user' | 'bot'; text: string };
 
 const modules = [
+  ['Workspaces', 'Dominios profesionales con color, icono, tipos, plantillas, automatizaciones, biblioteca y dashboard propio.', Landmark],
   ['Gestión de casos', 'Código, cliente, estado, tipo, prioridad, responsable, área, etiquetas, riesgo, fechas, SLA y cierre.', BriefcaseBusiness],
   ['Expedientes', 'Documentos, observaciones, tareas, comentarios, adjuntos, aprobaciones, vencimientos e historial.', ClipboardCheck],
   ['Workflow configurable', 'Estados, transiciones, checklist, documentos requeridos, tareas y vencimientos por tipo de caso.', SearchCheck],
@@ -40,7 +41,8 @@ const modules = [
   ['Honorarios y facturación', 'Por hora, fijo, abono, éxito, gasto, pendiente, vencido, pagado y forecast de cobranza.', BadgeDollarSign],
   ['Vencimientos y alertas', 'Fechas críticas, tareas asociadas, responsables, historial y base para notificaciones automáticas.', TimerReset],
   ['Dashboard', 'Casos abiertos, cerrados, vencimientos, productividad, facturación, horas, riesgo y SLA.', BarChart3],
-  ['Copiloto', 'Resúmenes, documentación faltante, casos vencidos, clientes pendientes y borradores revisables.', Bot],
+  ['Biblioteca profesional', 'Procedimientos, modelos, normativa, jurisprudencia, manuales y buenas prácticas consultables por IA.', Landmark],
+  ['Copiloto profesional', 'Resúmenes, documentación faltante, casos vencidos, clientes pendientes y borradores revisables.', Bot],
 ] as const;
 
 const caseTypes = ['Jurídico', 'Contable', 'Escribanía', 'Auditoría', 'Seguros', 'RRHH', 'Gestoría', 'Comercio exterior', 'Certificaciones', 'Ambiental'];
@@ -94,14 +96,14 @@ const backofficeViews = [
     title: 'Indicadores de operación por casos',
     summary: 'Casos abiertos, cerrados, vencimientos próximos, horas, honorarios pendientes y actividad crítica del tenant demo.',
     image: '/backoffice/caseflow-dashboard.png',
-    kpis: [['300', 'expedientes'], ['24', 'vencimientos'], ['842 h', 'horas'], ['US$ 184k', 'honorarios']],
+    kpis: [['100', 'casos'], ['24', 'vencimientos'], ['842 h', 'horas'], ['US$ 184k', 'honorarios']],
   },
   {
     label: 'Expedientes',
     title: 'Casos con workflow, cliente, responsable y SLA',
     summary: 'Listado operativo con casos por workspace, tipo, estado, prioridad, responsable y acceso al expediente completo.',
     image: '/backoffice/caseflow-cases.png',
-    kpis: [['120', 'clientes'], ['5', 'workspaces'], ['43', 'modelos'], ['9', 'flujos']],
+    kpis: [['100', 'casos'], ['5', 'workspaces'], ['20', 'tipos'], ['54', 'relaciones']],
   },
   {
     label: 'Copiloto',
@@ -118,6 +120,52 @@ const workspacesDemo = [
   ['Escribanía', 'Poderes, certificaciones, escrituras, identidad, firmas y entrega segura.', 'NOTARY'],
   ['Seguros', 'Siniestros, evidencias, liquidación, terceros, pericias y SLA de respuesta.', 'INSURANCE'],
   ['Auditoría', 'Plan de trabajo, controles, hallazgos, documentación faltante y entregables.', 'AUDIT'],
+] as const;
+
+const navigationGroups = [
+  ['CRM', ['Leads', 'Clientes', 'Propuestas']],
+  ['Operación', ['Casos', 'Tipos de Caso', 'Workspaces', 'Expedientes', 'Relaciones']],
+  ['Gestión', ['Workflow', 'Tareas', 'Agenda', 'Vencimientos']],
+  ['Documentación', ['Documentos', 'Plantillas', 'Borradores', 'Firmas', 'Entregas']],
+  ['Administración', ['Horas', 'Honorarios', 'Gastos', 'Billing']],
+  ['Inteligencia', ['Biblioteca Profesional', 'Automatizaciones', 'Dashboard', 'Copiloto']],
+] as const;
+
+const dashboardWidgets = [
+  ['Casos activos', '76', 'Operación abierta por workspace'],
+  ['Casos próximos a vencer', '24', 'SLA y vencimientos críticos'],
+  ['Horas trabajadas', '842 h', 'Time tracking facturable'],
+  ['Honorarios pendientes', 'US$ 184k', 'Billing operativo'],
+  ['Documentos pendientes', '38', 'Borradores y entregas abiertas'],
+  ['Firmas pendientes', '12', 'Solicitudes en curso'],
+  ['Casos sin movimiento', '9', 'Riesgo operativo'],
+  ['Automatizaciones', '5', 'Reglas activas por workspace'],
+] as const;
+
+const caseDetailBlocks = [
+  ['Información general', 'Código, cliente, workspace, responsable, prioridad, estado, SLA y riesgo en una cabecera clara.'],
+  ['Timeline', 'Comentarios, cambios de estado, documentos, firmas, automatizaciones y actividad cronológica.'],
+  ['Expediente', 'Documentos, carpetas, versiones, etiquetas, adjuntos, entregas y trazabilidad documental.'],
+  ['Checklist', 'Progreso visual por tipo de caso, requisitos pendientes y documentos esperados.'],
+  ['Workflow', 'Estados visibles y transiciones permitidas sin hardcodear el flujo.'],
+  ['Vencimientos', 'Calendario, próximos eventos, alertas, responsables y fechas críticas.'],
+  ['Costos', 'Horas, gastos, honorarios, billing y forecast operativo.'],
+  ['Relaciones', 'Cliente, empresa, contrato, caso, documento, otros casos y terceros conectados.'],
+] as const;
+
+const coreCapabilities = [
+  'Usuarios',
+  'Roles',
+  'Permisos',
+  'Multiempresa',
+  'Expedientes',
+  'Workflow',
+  'Documentos',
+  'Automatizaciones',
+  'Dashboard',
+  'Notificaciones',
+  'APIs',
+  'Copiloto IA',
 ] as const;
 
 const externalAccess = [
@@ -270,10 +318,10 @@ function BackofficeGallery() {
 
 function App() {
   const roi = useMemo(() => ({
-    cases: 300,
-    clients: 120,
-    open: 200,
-    closed: 50,
+    cases: 100,
+    workspaces: 5,
+    relations: 54,
+    links: 40,
   }), []);
   useEffect(() => {
     track('VIEW', { actionCode: 'caseflow_page_home', actionLabel: 'CaseFlow landing', category: 'NAVIGATION' });
@@ -313,10 +361,44 @@ function App() {
       </section>
 
       <section className="proof">
-        <article><strong>{roi.clients}</strong><span>clientes</span></article>
+        <article><strong>{roi.workspaces}</strong><span>workspaces</span></article>
         <article><strong>{roi.cases}</strong><span>casos demo</span></article>
-        <article><strong>{roi.open}</strong><span>casos abiertos</span></article>
-        <article><strong>{roi.closed}</strong><span>casos cerrados</span></article>
+        <article><strong>{roi.relations}</strong><span>relaciones</span></article>
+        <article><strong>{roi.links}</strong><span>links seguros</span></article>
+      </section>
+
+      <section className="section enterprise-shell">
+        <div className="section-title">
+          <p className="eyebrow">PLATAFORMA ENTERPRISE</p>
+          <h2>Una interfaz organizada por operación profesional, no por rubro.</h2>
+          <p>La navegación separa CRM, operación, gestión, documentación, administración e inteligencia para que el caso sea el punto de unión entre personas, documentos, vencimientos, costos y copiloto.</p>
+        </div>
+        <div className="shell-board">
+          <aside className="shell-sidebar">
+            {navigationGroups.map(([group, items]) => (
+              <div key={group}>
+                <strong>{group}</strong>
+                {items.map((item) => <span key={item}>{item}</span>)}
+              </div>
+            ))}
+          </aside>
+          <article className="shell-dashboard">
+            <header>
+              <small>Sterling Whitman LLP</small>
+              <h3>Executive Case Operations</h3>
+              <p>Dashboard principal por casos, workspaces, vencimientos, documentos, firmas, horas y automatizaciones.</p>
+            </header>
+            <div className="widget-grid">
+              {dashboardWidgets.map(([title, value, detail]) => (
+                <div key={title}>
+                  <span>{title}</span>
+                  <strong>{value}</strong>
+                  <small>{detail}</small>
+                </div>
+              ))}
+            </div>
+          </article>
+        </div>
       </section>
 
       <section id="modulos" className="section">
@@ -378,6 +460,22 @@ function App() {
           {flow.map(([title, copy], index) => (
             <article key={title}>
               <b>{index + 1}</b>
+              <h3>{title}</h3>
+              <p>{copy}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="section case-center">
+        <div className="section-title">
+          <p className="eyebrow">EL CASO COMO ENTIDAD PRINCIPAL</p>
+          <h2>La vista de caso debe sentirse como el centro de mando.</h2>
+          <p>El caso conecta expediente, workflow, tareas, documentos, firmas, vencimientos, costos, relaciones, historial y copiloto. No es una ficha: es la operación completa.</p>
+        </div>
+        <div className="case-detail-grid">
+          {caseDetailBlocks.map(([title, copy]) => (
+            <article key={title}>
               <h3>{title}</h3>
               <p>{copy}</p>
             </article>
@@ -452,14 +550,25 @@ function App() {
 
       <section className="section kb-strip">
         <article>
-          <p className="eyebrow">KB PARA COPILOTO</p>
-          <h2>Experto en operación por casos.</h2>
-          <p>El copiloto se nutre de KB curada del tenant y de APIs del backoffice. No responde como folleto: consulta datos, calcula indicadores, orienta flujos y propone acciones.</p>
+          <p className="eyebrow">BIBLIOTECA PROFESIONAL</p>
+          <h2>La base de conocimiento que vuelve útil al copiloto.</h2>
+          <p>Procedimientos, modelos, plantillas, normativa, jurisprudencia, manuales y buenas prácticas quedan disponibles para que el copiloto responda con contexto del workspace y del tipo de caso.</p>
         </article>
         <div className="bot-capabilities">
           {botCapabilities.map(([title, copy]) => (
             <span key={title}><Bot size={18} /><b>{title}</b>{copy}</span>
           ))}
+        </div>
+      </section>
+
+      <section className="section core-section">
+        <div>
+          <p className="eyebrow">CONSTRUIDO SOBRE DICEPROJECTS CORE</p>
+          <h2>CaseFlow reutiliza el Core común y lo especializa por caso.</h2>
+          <p>La plataforma hereda seguridad, multiempresa, roles, permisos, expedientes, workflow, documentos, automatizaciones, dashboards, APIs, notificaciones y copiloto IA.</p>
+        </div>
+        <div className="core-list">
+          {coreCapabilities.map((item) => <span key={item}><CheckCircle2 size={16} /> {item}</span>)}
         </div>
       </section>
 
@@ -501,7 +610,7 @@ function App() {
         <div>
           <p className="eyebrow">CASO DE ÉXITO DEMO</p>
           <h2>Sterling Whitman LLP, una demo vertical sobre el motor universal de CaseFlow.</h2>
-          <p>La demo jurídica muestra clientes, casos, documentos, estados, vencimientos, costos y dashboard; el mismo motor aplica a estudios contables, seguros, auditorías, gestorías y certificadoras.</p>
+          <p>La demo muestra 100 casos, 20 tipos, 5 workspaces, leads, propuestas, links seguros, relaciones, biblioteca profesional, automatizaciones y billing; el mismo motor aplica a estudios contables, seguros, auditorías, gestorías y certificadoras.</p>
         </div>
         <form>
           <input placeholder="Nombre" />

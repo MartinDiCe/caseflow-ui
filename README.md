@@ -62,7 +62,32 @@ No se debe vender como terminado todavía:
 
 ## Demo
 
-La landing acompaña el tenant demo `Sterling Whitman LLP`, cargado por API con 120 clientes y 300 expedientes jurídicos. Es una demostración vertical del motor universal de CaseFlow.
+La landing acompaña el tenant demo `Sterling Whitman LLP`, cargado por API como operación profesional multiworkspace:
+
+- 100 casos.
+- 20 tipos de caso.
+- 5 workspaces: legal, accounting, notary, insurance y audit.
+- 10 leads.
+- 5 propuestas.
+- 40 links seguros.
+- 54 relaciones.
+- 30 documentos en Biblioteca Profesional.
+- 5 automatizaciones.
+- 20 documentos de billing.
+
+Es una demostración vertical del motor universal de CaseFlow, no un producto limitado al rubro jurídico.
+
+## Criterio UI
+
+La interfaz pública debe transmitir plataforma enterprise y backoffice moderno:
+
+- Mucho blanco, grises y azules institucionales.
+- Caso como entidad principal.
+- Workspace como dominio operativo.
+- Dashboard ejecutivo antes que tablas.
+- Biblioteca Profesional en lugar de "knowledge" visible para usuario final.
+- Copiloto como asistente profesional, no como chatbot genérico.
+- Links externos como extensión opcional, sin prometer portal cerrado obligatorio.
 
 ## Criterio de acceso externo
 

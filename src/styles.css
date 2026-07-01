@@ -341,6 +341,143 @@ main {
   text-transform: uppercase;
 }
 
+.enterprise-shell {
+  padding-bottom: 40px;
+}
+
+.shell-board {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 18px;
+  max-width: 1240px;
+  margin: 0 auto;
+  border: 1px solid rgba(16, 24, 32, .1);
+  border-radius: 18px;
+  background: #1f252c;
+  padding: 18px;
+  box-shadow: 0 24px 72px rgba(16, 24, 32, .18);
+}
+
+.shell-sidebar {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+  border-radius: 12px;
+  background: #151b22;
+  padding: 18px;
+}
+
+.shell-sidebar div {
+  display: grid;
+  gap: 7px;
+  border-bottom: 1px solid rgba(255, 255, 255, .08);
+  padding-bottom: 12px;
+}
+
+.shell-sidebar div:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.shell-sidebar strong {
+  color: #8fb6ca;
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.shell-sidebar span {
+  min-height: 34px;
+  border-radius: 8px;
+  color: #edf6fb;
+  padding: 8px 10px;
+  font-size: 14px;
+  font-weight: 850;
+}
+
+.shell-sidebar span:nth-child(2) {
+  background: rgba(11, 143, 211, .22);
+}
+
+.shell-dashboard {
+  border-radius: 12px;
+  background: #f7fafc;
+  padding: 26px;
+}
+
+.shell-dashboard header {
+  display: grid;
+  gap: 8px;
+  max-width: 720px;
+  margin-bottom: 22px;
+}
+
+.shell-dashboard small {
+  color: var(--blue);
+  font-weight: 950;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.shell-dashboard h3 {
+  margin: 0;
+  font-size: clamp(30px, 4vw, 48px);
+  line-height: 1;
+  letter-spacing: -.05em;
+}
+
+.shell-dashboard p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.52;
+}
+
+.widget-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.widget-grid div {
+  min-height: 132px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  padding: 16px;
+  box-shadow: 0 14px 36px rgba(16, 24, 32, .06);
+}
+
+.widget-grid span {
+  display: block;
+  min-height: 34px;
+  color: #6a7b8f;
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+}
+
+.widget-grid strong {
+  display: block;
+  margin-top: 8px;
+  color: #111a24;
+  font-size: 34px;
+  letter-spacing: -.04em;
+}
+
+.widget-grid small {
+  display: block;
+  margin-top: 8px;
+  color: #65778b;
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: 0;
+  line-height: 1.35;
+  text-transform: none;
+}
+
 .section {
   padding: 96px clamp(20px, 5vw, 72px);
 }
@@ -437,6 +574,38 @@ main {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 16px;
+}
+
+.case-center {
+  background: #f8fbfd;
+}
+
+.case-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.case-detail-grid article {
+  min-height: 170px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  padding: 22px;
+  box-shadow: 0 16px 38px rgba(37, 41, 47, .07);
+}
+
+.case-detail-grid h3 {
+  margin: 0 0 10px;
+  font-size: 19px;
+  letter-spacing: -.03em;
+}
+
+.case-detail-grid p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.52;
 }
 
 .workspace-type-grid article,
@@ -886,6 +1055,27 @@ main {
   padding: 32px;
 }
 
+.core-section {
+  display: grid;
+  grid-template-columns: minmax(0, .88fr) minmax(360px, 1fr);
+  gap: clamp(28px, 5vw, 64px);
+  align-items: center;
+  background: #ffffff;
+}
+
+.core-section h2 {
+  margin: 0;
+  font-size: clamp(34px, 4.6vw, 58px);
+  line-height: 1;
+  letter-spacing: -.05em;
+}
+
+.core-section p {
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1.58;
+}
+
 .bot-capabilities {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1136,6 +1326,16 @@ footer {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .shell-board,
+  .core-section {
+    grid-template-columns: 1fr;
+  }
+
+  .widget-grid,
+  .case-detail-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .workspace-type-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1185,6 +1385,8 @@ footer {
 
   .proof,
   .cards,
+  .widget-grid,
+  .case-detail-grid,
   .metrics,
   .link-grid,
   .workspace-type-grid,
