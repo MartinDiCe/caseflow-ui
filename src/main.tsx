@@ -123,15 +123,60 @@ const practiceAreas = [
 ] as const;
 
 const caseDetailBlocks = [
-  ['Información general', 'Código, cliente, área de trabajo, responsable, prioridad, estado, SLA y riesgo en una cabecera clara.'],
-  ['Timeline', 'Comentarios, cambios de estado, documentos, firmas, automatizaciones y actividad cronológica.'],
-  ['Expediente', 'Documentos, carpetas, versiones, etiquetas, adjuntos, entregas y trazabilidad documental.'],
-  ['Checklist', 'Progreso visual por tipo de caso, requisitos pendientes y documentos esperados.'],
-  ['Workflow', 'Estados visibles y transiciones permitidas sin hardcodear el flujo.'],
-  ['Vencimientos', 'Calendario, próximos eventos, alertas, responsables y fechas críticas.'],
-  ['Costos', 'Horas, gastos, honorarios, billing y forecast operativo.'],
-  ['Relaciones', 'Cliente, empresa, contrato, caso, documento, otros casos y terceros conectados.'],
+  { title: 'Información general', copy: 'Código, cliente, área de trabajo, responsable, prioridad, estado, SLA y riesgo en una cabecera clara.', visual: 'summary' },
+  { title: 'Timeline', copy: 'Comentarios, cambios de estado, documentos, firmas, automatizaciones y actividad cronológica.', visual: 'timeline' },
+  { title: 'Expediente', copy: 'Documentos, carpetas, versiones, etiquetas, adjuntos, entregas y trazabilidad documental.', visual: 'folder' },
+  { title: 'Checklist', copy: 'Progreso visual por tipo de caso, requisitos pendientes y documentos esperados.', visual: 'checklist' },
+  { title: 'Workflow', copy: 'Estados visibles y transiciones permitidas sin hardcodear el flujo.', visual: 'workflow' },
+  { title: 'Vencimientos', copy: 'Calendario, próximos eventos, alertas, responsables y fechas críticas.', visual: 'calendar' },
+  { title: 'Costos', copy: 'Horas, gastos, honorarios, billing y forecast operativo.', visual: 'costs' },
+  { title: 'Relaciones', copy: 'Cliente, empresa, contrato, caso, documento, otros casos y terceros conectados.', visual: 'network' },
 ] as const;
+
+function CaseMiniPreview({ kind }: { kind: typeof caseDetailBlocks[number]['visual'] }) {
+  if (kind === 'timeline') {
+    return (
+      <div className="mini-preview mini-timeline" aria-hidden="true">
+        <span /><p>Estado actualizado</p>
+        <span /><p>Documento generado</p>
+        <span /><p>Firma solicitada</p>
+      </div>
+    );
+  }
+  if (kind === 'folder') {
+    return (
+      <div className="mini-preview mini-folder" aria-hidden="true">
+        <div><FileText size={15} /><span>Contrato v2</span><b>PDF</b></div>
+        <div><FileSignature size={15} /><span>Firma cliente</span><b>SENT</b></div>
+        <div><ClipboardCheck size={15} /><span>Evidencia</span><b>OK</b></div>
+      </div>
+    );
+  }
+  if (kind === 'checklist') {
+    return (
+      <div className="mini-preview mini-checklist" aria-hidden="true">
+        <strong>72%</strong>
+        <div><span style={{ width: '72%' }} /></div>
+        <p><CheckCircle2 size={14} /> Identidad validada</p>
+        <p><CheckCircle2 size={14} /> Documentos recibidos</p>
+        <p className="pending">Pendiente: aprobación final</p>
+      </div>
+    );
+  }
+  if (kind === 'workflow') {
+    return <div className="mini-preview mini-flow" aria-hidden="true"><span>Open</span><span>Review</span><span>Sent</span></div>;
+  }
+  if (kind === 'calendar') {
+    return <div className="mini-preview mini-calendar" aria-hidden="true"><b>11</b><span>Jul</span><p>Vence respuesta</p></div>;
+  }
+  if (kind === 'costs') {
+    return <div className="mini-preview mini-costs" aria-hidden="true"><strong>US$ 8.450</strong><span>42h facturables</span></div>;
+  }
+  if (kind === 'network') {
+    return <div className="mini-preview mini-network" aria-hidden="true"><span /><span /><span /><em /></div>;
+  }
+  return <div className="mini-preview mini-summary" aria-hidden="true"><b>HIGH</b><span>SLA 6d</span><p>Cliente · Responsable · Área</p></div>;
+}
 
 const coreCapabilities = [
   'Usuarios',
@@ -428,8 +473,9 @@ function App() {
           <p>El caso conecta expediente, workflow, tareas, documentos, firmas, vencimientos, costos, relaciones, historial y copiloto. No es una ficha: es la operación completa.</p>
         </div>
         <div className="case-detail-grid">
-          {caseDetailBlocks.map(([title, copy]) => (
+          {caseDetailBlocks.map(({ title, copy, visual }) => (
             <article key={title}>
+              <CaseMiniPreview kind={visual} />
               <h3>{title}</h3>
               <p>{copy}</p>
             </article>
