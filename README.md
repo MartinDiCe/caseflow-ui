@@ -49,7 +49,7 @@ Disponible en la demo/API:
 - Tareas, participantes, documentos, vencimientos, eventos/calendario, time tracking, honorarios, gastos, firmas/entregas, notas e historial.
 - Dashboard y links públicos documentales.
 - Copiloto comercial con KB específica.
-- Workspaces por rubro/línea de negocio: legal, contable, escribanía, seguros, auditoría, etc.
+- Áreas de trabajo por rubro/línea de negocio: legal, contable, escribanía, seguros, auditoría, etc.
 - Acceso externo opcional: APIs públicas controladas, links seguros, formularios y landings sin obligar a portal cerrado.
 - Capturas reales del backoffice DiceProjects para dashboard, expedientes y copiloto.
 
@@ -62,11 +62,11 @@ No se debe vender como terminado todavía:
 
 ## Demo
 
-La landing acompaña el tenant demo `Cliente Modelo · CaseFlow Demo`, cargado por API como operación profesional multiworkspace:
+La landing acompaña el cliente demo `Cliente Modelo · CaseFlow Demo`, cargado por API como operación profesional con varias áreas de trabajo:
 
 - 100 casos.
 - 20 tipos de caso.
-- 5 workspaces: legal, accounting, notary, insurance y audit.
+- 5 áreas de trabajo: legal, accounting, notary, insurance y audit.
 - 10 leads.
 - 5 propuestas.
 - 40 links seguros.
@@ -83,7 +83,7 @@ La interfaz pública debe transmitir plataforma enterprise y backoffice moderno:
 
 - Mucho blanco, grises y azules institucionales.
 - Caso como entidad principal.
-- Workspace como dominio operativo.
+- Área de trabajo como dominio operativo.
 - Dashboard ejecutivo antes que tablas.
 - Biblioteca Profesional en lugar de "knowledge" visible para usuario final.
 - Copiloto como asistente profesional, no como chatbot genérico.
@@ -107,7 +107,7 @@ No se promete portal cliente obligatorio. Los links públicos documentales y de 
 El copiloto público y comercial debe entender:
 
 - qué es un caso;
-- qué es un workspace;
+- qué es un área de trabajo;
 - cómo nacen checklist, vencimientos y plantillas por tipo;
 - cómo se consultan expedientes, documentos y links públicos;
 - cómo se calcula operación sin depender del LLM para KPIs básicos;
