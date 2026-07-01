@@ -122,26 +122,6 @@ const practiceAreas = [
   ['Auditoría', 'Plan de trabajo, controles, hallazgos, documentación faltante y entregables.', 'AUDIT'],
 ] as const;
 
-const navigationGroups = [
-  ['CRM', ['Leads', 'Clientes', 'Propuestas']],
-  ['Operación', ['Casos', 'Tipos de Caso', 'Áreas de trabajo', 'Expedientes', 'Relaciones']],
-  ['Gestión', ['Workflow', 'Tareas', 'Agenda', 'Vencimientos']],
-  ['Documentación', ['Documentos', 'Plantillas', 'Borradores', 'Firmas', 'Entregas']],
-  ['Administración', ['Horas', 'Honorarios', 'Gastos', 'Billing']],
-  ['Inteligencia', ['Biblioteca Profesional', 'Automatizaciones', 'Dashboard', 'Copiloto']],
-] as const;
-
-const dashboardWidgets = [
-  ['Casos activos', '76', 'Operación abierta por área'],
-  ['Casos próximos a vencer', '24', 'SLA y vencimientos críticos'],
-  ['Horas trabajadas', '842 h', 'Time tracking facturable'],
-  ['Honorarios pendientes', 'US$ 184k', 'Billing operativo'],
-  ['Documentos pendientes', '38', 'Borradores y entregas abiertas'],
-  ['Firmas pendientes', '12', 'Solicitudes en curso'],
-  ['Casos sin movimiento', '9', 'Riesgo operativo'],
-  ['Automatizaciones', '5', 'Reglas activas por área'],
-] as const;
-
 const caseDetailBlocks = [
   ['Información general', 'Código, cliente, área de trabajo, responsable, prioridad, estado, SLA y riesgo en una cabecera clara.'],
   ['Timeline', 'Comentarios, cambios de estado, documentos, firmas, automatizaciones y actividad cronológica.'],
@@ -373,40 +353,6 @@ function App() {
         <article><strong>{roi.cases}</strong><span>casos demo</span></article>
         <article><strong>{roi.relations}</strong><span>relaciones</span></article>
         <article><strong>{roi.links}</strong><span>links seguros</span></article>
-      </section>
-
-      <section className="section enterprise-shell">
-        <div className="section-title">
-          <p className="eyebrow">PLATAFORMA ENTERPRISE</p>
-          <h2>Una interfaz organizada por operación profesional, no por rubro.</h2>
-          <p>La navegación separa CRM, operación, gestión, documentación, administración e inteligencia para que el caso sea el punto de unión entre personas, documentos, vencimientos, costos y copiloto.</p>
-        </div>
-        <div className="shell-board">
-          <aside className="shell-sidebar">
-            {navigationGroups.map(([group, items]) => (
-              <div key={group}>
-                <strong>{group}</strong>
-                {items.map((item) => <span key={item}>{item}</span>)}
-              </div>
-            ))}
-          </aside>
-          <article className="shell-dashboard">
-            <header>
-              <small>Cliente Modelo · Operación profesional</small>
-              <h3>Executive Case Operations</h3>
-              <p>Dashboard principal por casos, áreas, vencimientos, documentos, firmas, horas y automatizaciones.</p>
-            </header>
-            <div className="widget-grid">
-              {dashboardWidgets.map(([title, value, detail]) => (
-                <div key={title}>
-                  <span>{title}</span>
-                  <strong>{value}</strong>
-                  <small>{detail}</small>
-                </div>
-              ))}
-            </div>
-          </article>
-        </div>
       </section>
 
       <section id="modulos" className="section">
