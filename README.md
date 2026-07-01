@@ -62,7 +62,7 @@ No se debe vender como terminado todavía:
 
 ## Demo
 
-La landing acompaña el tenant demo `Sterling Whitman LLP`, cargado por API como operación profesional multiworkspace:
+La landing acompaña el tenant demo `Cliente Modelo · CaseFlow Demo`, cargado por API como operación profesional multiworkspace:
 
 - 100 casos.
 - 20 tipos de caso.

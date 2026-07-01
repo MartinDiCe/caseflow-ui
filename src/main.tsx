@@ -71,7 +71,7 @@ const publicLinks = [
     title: 'Modelo de engagement letter',
     tag: 'MODELO PÚBLICO',
     copy: 'Vista pública real de plantilla documental compartida por token para revisar alcance y variables.',
-    detail: 'Sterling Whitman LLP · onboarding de cliente',
+    detail: 'Cliente Modelo · onboarding de cliente',
     href: publicUrl(config.templateEngagementPath),
   },
   {
@@ -282,7 +282,7 @@ function BackofficeGallery() {
       <div className="backoffice-showcase">
         <aside className="backoffice-side">
           <div className="backoffice-window-dots"><span /><span /><span /></div>
-          <p>Sterling Whitman LLP · CaseFlow Demo</p>
+          <p>Cliente Modelo · CaseFlow Demo</p>
           <nav>
             {backofficeViews.map((view, index) => (
               <button key={view.label} className={index === activeIndex ? 'active' : ''} type="button" onClick={() => setActiveIndex(index)}>
@@ -349,7 +349,7 @@ function App() {
           </div>
         </div>
         <div className="legal-board">
-          <header><Landmark size={22} /><strong>Sterling Whitman LLP</strong><span>CaseFlow Demo</span></header>
+          <header><Landmark size={22} /><strong>Cliente Modelo</strong><span>CaseFlow Demo</span></header>
           {demoCases.map(([code, title, status, type]) => (
             <article key={code}>
               <b>{code}</b>
@@ -384,7 +384,7 @@ function App() {
           </aside>
           <article className="shell-dashboard">
             <header>
-              <small>Sterling Whitman LLP</small>
+              <small>Cliente Modelo · Operación profesional</small>
               <h3>Executive Case Operations</h3>
               <p>Dashboard principal por casos, workspaces, vencimientos, documentos, firmas, horas y automatizaciones.</p>
             </header>
@@ -609,7 +609,7 @@ function App() {
       <section id="demo" className="section lead">
         <div>
           <p className="eyebrow">CASO DE ÉXITO DEMO</p>
-          <h2>Sterling Whitman LLP, una demo vertical sobre el motor universal de CaseFlow.</h2>
+          <h2>Cliente Modelo, una demo multiworkspace sobre el motor universal de CaseFlow.</h2>
           <p>La demo muestra 100 casos, 20 tipos, 5 workspaces, leads, propuestas, links seguros, relaciones, biblioteca profesional, automatizaciones y billing; el mismo motor aplica a estudios contables, seguros, auditorías, gestorías y certificadoras.</p>
         </div>
         <form>
