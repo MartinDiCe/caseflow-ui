@@ -114,7 +114,7 @@ const backofficeViews = [
   },
 ] as const;
 
-const workspacesDemo = [
+const practiceAreas = [
   ['Legal', 'Demandas, contratos, audiencias, discovery, firmas y entregas documentales.', 'LEGAL'],
   ['Contable', 'Balances, liquidaciones, presentaciones, checklist documental y vencimientos fiscales.', 'ACCOUNTING'],
   ['Escribanía', 'Poderes, certificaciones, escrituras, identidad, firmas y entrega segura.', 'NOTARY'],
@@ -180,6 +180,14 @@ const botCapabilities = [
   ['Calcular', 'Devuelve indicadores sin depender del LLM: pendientes, vencidos, sin movimiento, horas y cobranza.'],
   ['Guiar', 'Sugiere próximos pasos según workflow, tipo de caso, checklist y estado actual.'],
   ['Generar', 'Puede preparar borradores desde plantillas y pedir datos faltantes antes de crear documentos.'],
+] as const;
+
+const documentLibrary = [
+  ['Jurídico', 'Engagement letter, demanda, contrato, NDA, poder, discovery, índice de evidencia, acuerdo y cierre.'],
+  ['Contable', 'Solicitud documental, liquidación mensual, balance, estados de resultados, certificación e informe.'],
+  ['Escribanía', 'Escritura pública, poder general, poder especial, certificación de firmas, minuta y acta.'],
+  ['Seguros', 'Denuncia de siniestro, informe pericial, carta de cobertura, liquidación e informe técnico.'],
+  ['Auditoría', 'Plan de auditoría, programa de trabajo, hallazgos, riesgos detectados e informe final.'],
 ] as const;
 
 const copilotKnowledge = [
@@ -319,7 +327,7 @@ function BackofficeGallery() {
 function App() {
   const roi = useMemo(() => ({
     cases: 100,
-    workspaces: 5,
+    areas: 5,
     relations: 54,
     links: 40,
   }), []);
@@ -361,7 +369,7 @@ function App() {
       </section>
 
       <section className="proof">
-        <article><strong>{roi.workspaces}</strong><span>áreas</span></article>
+        <article><strong>{roi.areas}</strong><span>áreas</span></article>
         <article><strong>{roi.cases}</strong><span>casos demo</span></article>
         <article><strong>{roi.relations}</strong><span>relaciones</span></article>
         <article><strong>{roi.links}</strong><span>links seguros</span></article>
@@ -441,7 +449,7 @@ function App() {
           <p>Cada área de trabajo ordena la operación por rubro, equipo o línea de negocio. Al crearla, puede heredar plantillas, checklist, vencimientos y reglas base.</p>
         </div>
         <div className="workspace-type-grid">
-          {workspacesDemo.map(([title, copy, code]) => (
+          {practiceAreas.map(([title, copy, code]) => (
             <article key={code}>
               <small>{code}</small>
               <h3>{title}</h3>
@@ -516,35 +524,33 @@ function App() {
 
       <BackofficeGallery />
 
-      <section className="section backoffice">
+      <section className="section document-library">
         <div className="section-title">
-          <p className="eyebrow">BACKOFFICE REAL</p>
-          <h2>Un panel pensado para operar, no para decorar.</h2>
-          <p>La demo se apoya en datos subidos por API: 120 clientes, 300 expedientes, flujos de estado, tareas, documentos, vencimientos y costos.</p>
+          <p className="eyebrow">BIBLIOTECA DOCUMENTAL</p>
+          <h2>Modelos profesionales integrados al expediente, no archivos sueltos.</h2>
+          <p>Cada documento nace desde un tipo de caso, queda versionado, puede requerir firma o aprobación, se entrega por link seguro y mantiene historial dentro del expediente.</p>
         </div>
-        <div className="workspace">
-          <aside>
-            <button className="active"><BriefcaseBusiness size={18} /> Expedientes</button>
-            <button><CalendarDays size={18} /> Agenda</button>
-            <button><FileText size={18} /> Documentos</button>
-            <button><BadgeDollarSign size={18} /> Honorarios</button>
-            <button><Bot size={18} /> Copiloto</button>
-          </aside>
-          <article>
-            <header><span>LEGAL-EXP-0299</span><strong>IP and licensing: Daniel Morris v. Riverside Procurement Inc</strong><em>Completed</em></header>
-            <div className="workspace-grid">
-              <p><b>Cliente</b><span>Daniel Morris</span></p>
-              <p><b>Tipo</b><span>IP & Technology</span></p>
-              <p><b>Responsable</b><span>Margaret Sterling</span></p>
-              <p><b>Próximo paso</b><span>Final document package</span></p>
-            </div>
-            <div className="timeline">
-              <span><SearchCheck size={16} /> Conflict check completo</span>
-              <span><FileText size={16} /> Discovery package generado</span>
-              <span><FileSignature size={16} /> Entrega documental enviada</span>
-              <span><ShieldCheck size={16} /> Historial auditado</span>
+        <div className="document-library-board">
+          <article className="document-flow-card">
+            <small>TRAZABILIDAD DOCUMENTAL</small>
+            <h3>Plantilla → Borrador → Revisión → Firma → Entrega → Historial</h3>
+            <p>El documento conserva expediente, responsable, versión, estado, fecha, firmantes, referencias y auditoría. El copiloto puede explicar qué falta y sugerir próximos pasos.</p>
+            <div>
+              <span>Versiones</span>
+              <span>Firmas</span>
+              <span>Entregas</span>
+              <span>Auditoría</span>
             </div>
           </article>
+          <div className="document-library-grid">
+            {documentLibrary.map(([title, copy]) => (
+              <article key={title}>
+                <FileText size={20} />
+                <h3>{title}</h3>
+                <p>{copy}</p>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 
