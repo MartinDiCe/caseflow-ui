@@ -16,7 +16,6 @@ import {
   Gavel,
   Landmark,
   MessageCircle,
-  Scale,
   SearchCheck,
   Send,
   ShieldCheck,
@@ -87,6 +86,52 @@ const publicLinks = [
     detail: 'LEGAL-EXP-0299 · final document package',
     href: publicUrl(config.deliveryPath),
   },
+] as const;
+
+const backofficeViews = [
+  {
+    label: 'Dashboard',
+    title: 'Indicadores de operación por casos',
+    summary: 'Casos abiertos, cerrados, vencimientos próximos, horas, honorarios pendientes y actividad crítica del tenant demo.',
+    image: '/backoffice/caseflow-dashboard.png',
+    kpis: [['300', 'expedientes'], ['24', 'vencimientos'], ['842 h', 'horas'], ['US$ 184k', 'honorarios']],
+  },
+  {
+    label: 'Expedientes',
+    title: 'Casos con workflow, cliente, responsable y SLA',
+    summary: 'Listado operativo con casos por workspace, tipo, estado, prioridad, responsable y acceso al expediente completo.',
+    image: '/backoffice/caseflow-cases.png',
+    kpis: [['120', 'clientes'], ['5', 'workspaces'], ['43', 'modelos'], ['9', 'flujos']],
+  },
+  {
+    label: 'Copiloto',
+    title: 'Copiloto experto en CaseFlow',
+    summary: 'Consulta APIs, usa KB curada del tenant, calcula indicadores y orienta próximos pasos sin reemplazar criterio profesional.',
+    image: '/backoffice/backoffice-copilot.png',
+    kpis: [['KB', 'curada'], ['API', 'lectura'], ['IA', 'asistida'], ['SLA', 'visible']],
+  },
+] as const;
+
+const workspacesDemo = [
+  ['Legal', 'Demandas, contratos, audiencias, discovery, firmas y entregas documentales.', 'LEGAL'],
+  ['Contable', 'Balances, liquidaciones, presentaciones, checklist documental y vencimientos fiscales.', 'ACCOUNTING'],
+  ['Escribanía', 'Poderes, certificaciones, escrituras, identidad, firmas y entrega segura.', 'NOTARY'],
+  ['Seguros', 'Siniestros, evidencias, liquidación, terceros, pericias y SLA de respuesta.', 'INSURANCE'],
+  ['Auditoría', 'Plan de trabajo, controles, hallazgos, documentación faltante y entregables.', 'AUDIT'],
+] as const;
+
+const externalAccess = [
+  ['Link de entrega documental', 'El cliente recibe un token seguro para abrir documentos, ver contexto, descargar o imprimir.'],
+  ['Link de firma o aprobación', 'Una firma, aceptación o rechazo sigue su propio flujo de estado y queda trazado en el expediente.'],
+  ['Formulario externo', 'Sirve para pedir documentación, aprobar una propuesta o completar datos sin dar acceso al backoffice.'],
+  ['API pública controlada', 'El cliente puede integrar su web, intranet, CRM o un portal custom sin duplicar operación.'],
+] as const;
+
+const botCapabilities = [
+  ['Consultar', 'Busca casos, vencimientos, plantillas, tareas, entregas, honorarios y documentos del tenant.'],
+  ['Calcular', 'Devuelve indicadores sin depender del LLM: pendientes, vencidos, sin movimiento, horas y cobranza.'],
+  ['Guiar', 'Sugiere próximos pasos según workflow, tipo de caso, checklist y estado actual.'],
+  ['Generar', 'Puede preparar borradores desde plantillas y pedir datos faltantes antes de crear documentos.'],
 ] as const;
 
 const copilotKnowledge = [
@@ -167,6 +212,62 @@ function Copilot() {
   );
 }
 
+function BackofficeGallery() {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const activeView = backofficeViews[activeIndex] || backofficeViews[0];
+  return (
+    <section id="backoffice" className="section backoffice-section">
+      <div className="section-head">
+        <div>
+          <p className="eyebrow">BACKOFFICE REAL</p>
+          <h2>La operación se ve desde el panel, no desde una promesa.</h2>
+          <p>Capturas reales del backoffice DiceProjects usando el tenant demo de CaseFlow: dashboard, expedientes y copiloto sobre datos cargados por API.</p>
+        </div>
+      </div>
+      <div className="backoffice-tabs" role="tablist" aria-label="Galeria de backoffice CaseFlow">
+        {backofficeViews.map((view, index) => (
+          <button key={view.label} type="button" className={index === activeIndex ? 'active' : ''} onClick={() => setActiveIndex(index)} role="tab" aria-selected={index === activeIndex}>
+            {view.label}
+          </button>
+        ))}
+      </div>
+      <div className="backoffice-showcase">
+        <aside className="backoffice-side">
+          <div className="backoffice-window-dots"><span /><span /><span /></div>
+          <p>Sterling Whitman LLP · CaseFlow Demo</p>
+          <nav>
+            {backofficeViews.map((view, index) => (
+              <button key={view.label} className={index === activeIndex ? 'active' : ''} type="button" onClick={() => setActiveIndex(index)}>
+                <span>{String(index + 1).padStart(2, '0')}</span>
+                {view.label}
+              </button>
+            ))}
+          </nav>
+        </aside>
+        <article className="backoffice-board screenshot-board">
+          <header className="backoffice-board-head">
+            <div>
+              <small>CaseFlow Backoffice</small>
+              <h3>{activeView.title}</h3>
+              <p>{activeView.summary}</p>
+            </div>
+            <div className="board-status">
+              <span>LIVE</span>
+              <strong>Q2 2026</strong>
+            </div>
+          </header>
+          <div className="screenshot-stage">
+            <img src={activeView.image} alt={`${activeView.title} - captura CaseFlow`} loading="lazy" />
+          </div>
+          <div className="screenshot-proof">
+            {activeView.kpis.map(([value, label]) => <span key={label}><b>{value}</b>{label}</span>)}
+          </div>
+        </article>
+      </div>
+    </section>
+  );
+}
+
 function App() {
   const roi = useMemo(() => ({
     cases: 300,
@@ -181,10 +282,10 @@ function App() {
     <main>
       <nav className="nav">
         <a className="brand" href="#inicio">
-          <span className="brand-mark"><Scale size={22} /></span>
-          <span><strong>CaseFlow</strong><small>Case operations</small></span>
+          <span className="brand-mark" />
+          <span><strong>CaseFlow Pub</strong><small>by DiceProjects</small></span>
         </a>
-        <div><a data-mkt="caseflow_nav_modules" href="#modulos">Módulos</a><a data-mkt="caseflow_nav_flow" href="#flujo">Flujo</a><a data-mkt="caseflow_nav_dashboard" href="#dashboard">Dashboard</a><a data-mkt="caseflow_nav_links" href="#links">Links</a><a data-mkt="caseflow_nav_demo" href="#demo">Demo</a></div>
+        <div><a data-mkt="caseflow_nav_modules" href="#modulos">Módulos</a><a data-mkt="caseflow_nav_flow" href="#flujo">Flujo</a><a data-mkt="caseflow_nav_backoffice" href="#backoffice">Backoffice</a><a data-mkt="caseflow_nav_links" href="#links">Links</a><a data-mkt="caseflow_nav_demo" href="#demo">Demo</a></div>
       </nav>
 
       <section id="inicio" className="hero">
@@ -251,6 +352,23 @@ function App() {
         </div>
       </section>
 
+      <section className="section workspace-types">
+        <div className="section-title">
+          <p className="eyebrow">WORKSPACES POR NEGOCIO</p>
+          <h2>Un tenant puede operar varias prácticas sin mezclar criterios.</h2>
+          <p>El workspace ordena la operación por rubro, equipo o línea de negocio. Cada tipo puede heredar plantillas, checklist, vencimientos y reglas base cuando se crea.</p>
+        </div>
+        <div className="workspace-type-grid">
+          {workspacesDemo.map(([title, copy, code]) => (
+            <article key={code}>
+              <small>{code}</small>
+              <h3>{title}</h3>
+              <p>{copy}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
       <section id="flujo" className="section flows">
         <div className="section-title">
           <p className="eyebrow">ARQUITECTURA OPERATIVA</p>
@@ -260,6 +378,23 @@ function App() {
           {flow.map(([title, copy], index) => (
             <article key={title}>
               <b>{index + 1}</b>
+              <h3>{title}</h3>
+              <p>{copy}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="section external-access">
+        <div>
+          <p className="eyebrow">BACKOFFICE PRIMERO. ACCESO EXTERNO CUANDO SUMA.</p>
+          <h2>No obliga a tener portal cerrado.</h2>
+          <p>CaseFlow permite exponer información por APIs públicas controladas, formularios y links compartibles. El portal cliente puede existir, pero no es requisito para operar ni para mostrar valor.</p>
+        </div>
+        <div className="external-grid">
+          {externalAccess.map(([title, copy]) => (
+            <article key={title}>
+              <ExternalLink size={20} />
               <h3>{title}</h3>
               <p>{copy}</p>
             </article>
@@ -280,6 +415,8 @@ function App() {
           <article><BadgeDollarSign /><strong>US$ 184k</strong><span>honorarios pendientes</span></article>
         </div>
       </section>
+
+      <BackofficeGallery />
 
       <section className="section backoffice">
         <div className="section-title">
@@ -317,14 +454,28 @@ function App() {
         <article>
           <p className="eyebrow">KB PARA COPILOTO</p>
           <h2>Experto en operación por casos.</h2>
-          <p>El copiloto entiende casos, expedientes, tipos, workflows, checklist, vencimientos, documentos, honorarios, gastos, clientes, SLA y documentación pendiente.</p>
+          <p>El copiloto se nutre de KB curada del tenant y de APIs del backoffice. No responde como folleto: consulta datos, calcula indicadores, orienta flujos y propone acciones.</p>
         </article>
+        <div className="bot-capabilities">
+          {botCapabilities.map(([title, copy]) => (
+            <span key={title}><Bot size={18} /><b>{title}</b>{copy}</span>
+          ))}
+        </div>
+      </section>
+
+      <section className="section bot-examples">
+        <div className="section-title">
+          <p className="eyebrow">EJEMPLOS DE PREGUNTAS</p>
+          <h2>El copiloto entiende la operación real del tenant.</h2>
+        </div>
         <div className="kb-list">
           <span><CalendarDays size={18} /> Casos que vencen esta semana.</span>
           <span><FileText size={18} /> Documentación todavía no presentada.</span>
           <span><BadgeDollarSign size={18} /> Clientes con honorarios pendientes.</span>
           <span><TimerReset size={18} /> Causas sin movimiento hace 90 días.</span>
           <span><MessageCircle size={18} /> Resumen ejecutivo para cliente o socio.</span>
+          <span><ClipboardCheck size={18} /> Checklist incompleto por workspace.</span>
+          <span><FileSignature size={18} /> Entregas pendientes de firma o aceptación.</span>
         </div>
       </section>
 

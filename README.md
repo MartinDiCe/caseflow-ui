@@ -49,6 +49,9 @@ Disponible en la demo/API:
 - Tareas, participantes, documentos, vencimientos, eventos/calendario, time tracking, honorarios, gastos, firmas/entregas, notas e historial.
 - Dashboard y links públicos documentales.
 - Copiloto comercial con KB específica.
+- Workspaces por rubro/línea de negocio: legal, contable, escribanía, seguros, auditoría, etc.
+- Acceso externo opcional: APIs públicas controladas, links seguros, formularios y landings sin obligar a portal cerrado.
+- Capturas reales del backoffice DiceProjects para dashboard, expedientes y copiloto.
 
 No se debe vender como terminado todavía:
 
@@ -60,3 +63,27 @@ No se debe vender como terminado todavía:
 ## Demo
 
 La landing acompaña el tenant demo `Sterling Whitman LLP`, cargado por API con 120 clientes y 300 expedientes jurídicos. Es una demostración vertical del motor universal de CaseFlow.
+
+## Criterio de acceso externo
+
+CaseFlow se comunica como:
+
+```text
+BackOffice CaseFlow
+-> APIs públicas controladas
+-> Links seguros / formularios / landings opcionales
+-> Portal custom sólo si el cliente lo necesita
+```
+
+No se promete portal cliente obligatorio. Los links públicos documentales y de aprobación simulan la experiencia externa profesional sin exponer el backoffice.
+
+## Copiloto
+
+El copiloto público y comercial debe entender:
+
+- qué es un caso;
+- qué es un workspace;
+- cómo nacen checklist, vencimientos y plantillas por tipo;
+- cómo se consultan expedientes, documentos y links públicos;
+- cómo se calcula operación sin depender del LLM para KPIs básicos;
+- qué módulos existen en la demo y cómo aplican a estudios jurídicos, contables, escribanías, auditorías, seguros y otros equipos profesionales.
